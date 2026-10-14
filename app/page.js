@@ -1,7 +1,7 @@
 import PhotographerCard from "./components/PhotographerCard";
 import data from "../data/photographer.json";
 
-const photographers = data.photographers;
+const photographers = data;
 
 export default function Home() {
   return (
@@ -18,3 +18,4 @@ export default function Home() {
     </main>
   );
 }
+
