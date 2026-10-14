@@ -8,14 +8,11 @@ export default function Home() {
     <main>
       <h1>FishEye</h1>
       <p>Découvrez nos photographes</p>
-
-      {photographers.map((photographer) => (
-        <PhotographerCard
-          key={photographer.id}
-          photographer={photographer}
-        />
-      ))}
+      <section className="photographers-grid">
+        {photographers.map((photographer) => (
+          <PhotographerCard key={photographer.id} photographer={photographer} />
+        ))}
+      </section>
     </main>
   );
 }
-
