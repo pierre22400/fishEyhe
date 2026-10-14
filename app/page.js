@@ -1,10 +1,7 @@
 import PhotographerCard from "./components/PhotographerCard";
+import data from "../data/photographer.json";
 
-const photographers = [
-  { id: 243, name: "Mimi Keel", city: "London", country: "UK", price: 400 },
-  { id: 930, name: "Ellie-Rose Wilkens", city: "Paris", country: "France", price: 250 },
-  { id: 82, name: "Tracy Galindo", city: "Montreal", country: "Canada", price: 500 }
-];
+const photographers = data.photographers;
 
 export default function Home() {
   return (
