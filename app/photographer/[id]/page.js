@@ -1,7 +1,8 @@
 import photographers from "../../../data/photographer.json";
 import { notFound } from "next/navigation";
 import media from "../../../data/media.json";
-import MediaCard from "../../components/MediaCard";
+
+import MediaGallery from "../../components/MediaGallery";
 
 export default async function PhotographerPage({ params }) {
   const { id } = await params;
@@ -19,12 +20,8 @@ export default async function PhotographerPage({ params }) {
     <main>
       <h1>{photographer.name}</h1>
       <section aria-label="Galerie du photographe">
-  {photographerMedia.map((item) => (
-  <MediaCard
-    key={item.id}
-    media={item}
-  />
-))}
+<MediaGallery media={photographerMedia} />
+
 </section>
       <p>Identifiant : {id}</p>
     
