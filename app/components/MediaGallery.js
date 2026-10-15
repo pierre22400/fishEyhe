@@ -13,6 +13,16 @@ function handleNext() {
   setSelectedMedia(media[nextIndex]);
 }
 
+function handlePrevious() {
+  if (!selectedMedia || media.length === 0) return;
+
+  const currentIndex = media.findIndex((item) => item.id === selectedMedia.id);
+
+  const previousIndex = (currentIndex - 1 + media.length) % media.length;
+
+  setSelectedMedia(media[previousIndex]);
+}
+
 export default function MediaGallery({ media }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
 
@@ -40,6 +50,9 @@ export default function MediaGallery({ media }) {
               aria-label={selectedMedia.title}
             />
           )}
+          <button type="button" onClick={handlePrevious}>
+            ← Précédent
+          </button>
           <button type="button" onClick={handleNext}>
             Suivant →
           </button>
