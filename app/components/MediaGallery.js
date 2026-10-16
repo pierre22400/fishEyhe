@@ -3,10 +3,14 @@ import MediaCard from "./MediaCard";
 
 import { useState } from "react";
 
+
+
+export default function MediaGallery({ media }) {
+  const [selectedMedia, setSelectedMedia] = useState(null);
 function handleNext() {
   if (!selectedMedia || media.length === 0) return;
 
-  const currentIndex = media.findIndex((item) => item.id === selectedMedia.id);
+  const currentIndex = media.findIndex((item) => item === selectedMedia);
 
   const nextIndex = (currentIndex + 1) % media.length;
 
@@ -16,16 +20,12 @@ function handleNext() {
 function handlePrevious() {
   if (!selectedMedia || media.length === 0) return;
 
-  const currentIndex = media.findIndex((item) => item.id === selectedMedia.id);
+  const currentIndex = media.findIndex((item) => item === selectedMedia);
 
   const previousIndex = (currentIndex - 1 + media.length) % media.length;
 
   setSelectedMedia(media[previousIndex]);
 }
-
-export default function MediaGallery({ media }) {
-  const [selectedMedia, setSelectedMedia] = useState(null);
-
   return (
     <section aria-label="Galerie du photographe">
       {media.map((item) => (
