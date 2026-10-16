@@ -7,28 +7,65 @@ import { useState } from "react";
 
 export default function MediaGallery({ media }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
-function handleNext() {
-  if (!selectedMedia || media.length === 0) return;
+  const [sortBy, setSortBy] = useState("popularity");
+const mediaWithIds = media.map((item, index) => ({
+  ...item,
+  id: index,
+}));
+ 
+ const sortedMedia = [...mediaWithIds].sort((a, b) => {
+    if (sortBy === "popularity") {
+      return b.likes - a.likes;
+    }
 
-  const currentIndex = media.findIndex((item) => item === selectedMedia);
+    if (sortBy === "date") {
+      return new Date(b.date) - new Date(a.date);
+    }
 
-  const nextIndex = (currentIndex + 1) % media.length;
+    if (sortBy === "title") {
+      return a.title.localeCompare(b.title);
+    }
 
-  setSelectedMedia(media[nextIndex]);
-}
+    return 0;
+  });
 
-function handlePrevious() {
-  if (!selectedMedia || media.length === 0) return;
 
-  const currentIndex = media.findIndex((item) => item === selectedMedia);
+  function handleNext() {
+    if (!selectedMedia || sortedMedia.length === 0) return;
 
-  const previousIndex = (currentIndex - 1 + media.length) % media.length;
+    const currentIndex = sortedMedia.findIndex((item) => item.id === selectedMedia.id);
 
-  setSelectedMedia(media[previousIndex]);
-}
+    const nextIndex = (currentIndex + 1) % sortedMedia.length;
+
+    setSelectedMedia(sortedMedia[nextIndex]);
+  }
+
+  function handlePrevious() {
+    if (!selectedMedia || sortedMedia.length === 0) return;
+
+const currentIndex = sortedMedia.findIndex(
+  (item) => item.id === selectedMedia.id
+);
+
+    const previousIndex = (currentIndex - 1 + sortedMedia.length) % sortedMedia.length;
+
+    setSelectedMedia(sortedMedia[previousIndex]);
+  }
   return (
     <section aria-label="Galerie du photographe">
-      {media.map((item) => (
+      <label htmlFor="media-sort">Trier par : </label>
+
+      <select
+        id="media-sort"
+        value={sortBy}
+        onChange={(event) => setSortBy(event.target.value)}
+      >
+        <option value="popularity">Popularité</option>
+        <option value="date">Date</option>
+        <option value="title">Titre</option>
+      </select>
+
+      {sortedMedia.map((item) => (
         <MediaCard
           key={item.id}
           media={item}
