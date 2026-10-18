@@ -13,6 +13,12 @@ export default function MediaGallery({ media }) {
   const openerRef = useRef(null);
   // Reference to the modal container (associe cette référence à un élément HTML.)
   const modalRef = useRef(null);
+ const [mediaList, setMediaList] = useState(() =>
+  media.map((item, index) => ({
+    ...item,
+    id: index,
+  }))
+);
 
 
   // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
@@ -28,12 +34,17 @@ export default function MediaGallery({ media }) {
     }
   }, [selectedMedia]);
 
-  const mediaWithIds = media.map((item, index) => ({
-    ...item,
-    id: index,
-  }));
+function handleLike(item) {
+  setMediaList((previousMedia) =>
+    previousMedia.map((mediaItem) =>
+      mediaItem.id === item.id
+        ? { ...mediaItem, likes: mediaItem.likes + 1 }
+        : mediaItem
+    )
+  );
+}
 
-  const sortedMedia = [...mediaWithIds].sort((a, b) => {
+const sortedMedia = [...mediaList].sort((a, b) => {
     if (sortBy === "popularity") {
       return b.likes - a.likes;
     }
@@ -96,6 +107,7 @@ export default function MediaGallery({ media }) {
     openerRef.current = event.currentTarget;
     setSelectedMedia(item);
   }
+
   // Function to handle closing the media item and returning focus to the opener
   function handleClose() {
     setSelectedMedia(null);
@@ -125,6 +137,7 @@ export default function MediaGallery({ media }) {
           key={item.id}
           media={item}
           onSelect={(event) => handleOpen(event, item)}
+          onLike={() => handleLike(item)}
         />
       ))}
 

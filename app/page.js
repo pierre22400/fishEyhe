@@ -1,9 +1,10 @@
 import PhotographerCard from "./components/PhotographerCard";
-import data from "../data/photographer.json";
+import prisma from "../lib/prisma";
 
-const photographers = data;
 
-export default function Home() {
+
+export default async function Home() {
+  const photographers = await prisma.photographer.findMany();
   return (
     <main>
       <h1>FishEye</h1>

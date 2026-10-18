@@ -2,28 +2,31 @@ import styles from "./MediaCard.module.css";
 
 
 
-export default function MediaCard({ media, onSelect }) {
+export default function MediaCard({ media, onSelect, onLike }) {
   return (
     <article>
-{media.image ? (
-  <img
-    className={styles.image}
-    src={`/images/${media.image}`}
-    alt={media.title}
-  />
-) : (
-  <video
-    className={styles.image}
-    src={`/images/${media.video}`}
-    controls
-    aria-label={media.title}
-  />
-)}
+      {media.image ? (
+        <img
+          className={styles.image}
+          src={`/images/${media.image}`}
+          alt={media.title}
+        />
+      ) : (
+        <video
+          className={styles.image}
+          src={`/images/${media.video}`}
+          controls
+          aria-label={media.title}
+        />
+      )}
       <h2>{media.title}</h2>
       <p>{media.likes} likes</p>
+      <button type="button" onClick={onLike}>
+        J'aime
+      </button>
       <button type="button" onClick={onSelect}>
-  Sélectionner {media.title}
-</button>
+        Sélectionner {media.title}
+      </button>
     </article>
   );
 }
