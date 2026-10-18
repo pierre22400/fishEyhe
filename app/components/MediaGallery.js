@@ -13,13 +13,7 @@ export default function MediaGallery({ media }) {
   const openerRef = useRef(null);
   // Reference to the modal container (associe cette référence à un élément HTML.)
   const modalRef = useRef(null);
- const [mediaList, setMediaList] = useState(() =>
-  media.map((item, index) => ({
-    ...item,
-    id: index,
-  }))
-);
-
+const [mediaList, setMediaList] = useState(media);
 
   // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
   //  Focus the close button when a media item is selected
@@ -34,15 +28,31 @@ export default function MediaGallery({ media }) {
     }
   }, [selectedMedia]);
 
-function handleLike(item) {
-  setMediaList((previousMedia) =>
-    previousMedia.map((mediaItem) =>
-      mediaItem.id === item.id
-        ? { ...mediaItem, likes: mediaItem.likes + 1 }
-        : mediaItem
-    )
-  );
+
+async function handleLike(item) {
+  try {
+    const response = await fetch(`/api/media/${item.id}/like`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'enregistrement du like");
+    }
+
+    const data = await response.json();
+
+    setMediaList((previousMedia) =>
+      previousMedia.map((mediaItem) =>
+        mediaItem.id === item.id
+          ? { ...mediaItem, likes: data.likes }
+          : mediaItem
+      )
+    );
+  } catch (error) {
+    console.error("Impossible d'enregistrer le like :", error);
+  }
 }
+
 
 const sortedMedia = [...mediaList].sort((a, b) => {
     if (sortBy === "popularity") {
