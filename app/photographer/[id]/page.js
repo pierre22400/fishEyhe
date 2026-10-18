@@ -1,30 +1,37 @@
-import photographers from "../../../data/photographer.json";
-import { notFound } from "next/navigation";
-import media from "../../../data/media.json";
 
+import { notFound } from "next/navigation";
+import prisma from "../../../lib/prisma";
 import MediaGallery from "../../components/MediaGallery";
 
 export default async function PhotographerPage({ params }) {
   const { id } = await params;
+  const photographerId = Number(id);
 
-  const photographer = photographers.find(
-    (photographer) => photographer.id === Number(id),
-  );
+  if (!Number.isSafeInteger(photographerId) || photographerId <= 0) {
+    notFound();
+  }
+
+  const photographer = await prisma.photographer.findUnique({
+    where: { id: photographerId },
+  });
+
   if (!photographer) {
     notFound();
   }
-  const photographerMedia = media.filter(
-    (item) => item.photographerId === Number(id),
-  );
+
+  const photographerMedia = await prisma.media.findMany({
+    where: { photographerId },
+  });
+
   return (
     <main>
       <h1>{photographer.name}</h1>
-      <section aria-label="Galerie du photographe">
-<MediaGallery media={photographerMedia} />
 
-</section>
+      <section aria-label="Galerie du photographe">
+        <MediaGallery media={photographerMedia} />
+      </section>
+
       <p>Identifiant : {id}</p>
-    
     </main>
   );
 }
