@@ -11,12 +11,19 @@ export default function MediaGallery({ media }) {
   const closeButtonRef = useRef(null);
   // Reference to the opener button (associe cette référence à un élément HTML.)
   const openerRef = useRef(null);
-// Reference to the modal container (associe cette référence à un élément HTML.)
+  // Reference to the modal container (associe cette référence à un élément HTML.)
   const modalRef = useRef(null);
 
-  // Focus the close button when a media item is selected
+
+  // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
+  //  Focus the close button when a media item is selected
   useEffect(() => {
     if (selectedMedia) {
+      if (!modalRef.current?.open) {
+        //éviter de demander l'ouverture d'un dialogue déjà ouvert.
+        modalRef.current?.showModal();
+      }
+
       closeButtonRef.current?.focus();
     }
   }, [selectedMedia]);
@@ -68,6 +75,10 @@ export default function MediaGallery({ media }) {
   }
 
   function handleKeyDown(event) {
+    if (selectedMedia?.video) {
+      return;
+    }
+
     if (event.key === "ArrowRight") {
       handleNext();
     }
@@ -75,13 +86,6 @@ export default function MediaGallery({ media }) {
     if (event.key === "ArrowLeft") {
       handlePrevious();
     }
-
-    if (event.key === "Escape") {
-      handleClose();
-    }
-      if (event.key === "Tab") {
-    handleTabKey(event);
-  }
   }
 
   // Function to handle opening the media item and setting the opener reference
@@ -97,21 +101,11 @@ export default function MediaGallery({ media }) {
     setSelectedMedia(null);
     openerRef.current?.focus();
   }
-// Function to handle tab key navigation within the modal
-  function handleTabKey(event) {
-  const buttons = modalRef.current.querySelectorAll("button");
-
-  const firstButton = buttons[0];
-  const lastButton = buttons[buttons.length - 1];
-
-  if (event.shiftKey && document.activeElement === firstButton) {
+  function handleCancel(event) {
     event.preventDefault();
-    lastButton.focus();
-  } else if (!event.shiftKey && document.activeElement === lastButton) {
-    event.preventDefault();
-    firstButton.focus();
+    handleClose();
   }
-}
+
   return (
     <section aria-label="Galerie du photographe">
       <label htmlFor="media-sort">Trier par : </label>
@@ -135,14 +129,13 @@ export default function MediaGallery({ media }) {
       ))}
 
       {selectedMedia && (
-        <div
-            ref={modalRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Média sélectionné"
+        <dialog
+          ref={modalRef}
+          aria-labelledby="media-dialog-title"
+          onCancel={handleCancel}
           onKeyDown={handleKeyDown}
         >
-          <h2>{selectedMedia.title}</h2>
+          <h2 id="media-dialog-title">{selectedMedia.title}</h2>
 
           {selectedMedia.image ? (
             <img
@@ -173,7 +166,7 @@ export default function MediaGallery({ media }) {
           >
             Fermer
           </button>
-        </div>
+        </dialog>
       )}
 
       <p>
