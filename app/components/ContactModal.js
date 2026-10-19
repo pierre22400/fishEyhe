@@ -33,6 +33,7 @@ export default function ContactModal({ photographer }) {
         className="contact-trigger"
         type="button"
         onClick={() => setIsOpen(true)}
+        aria-label={`Contactez-moi : ${photographer.name}`}
       >
         Contactez-moi
       </button>

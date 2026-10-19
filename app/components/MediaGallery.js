@@ -148,16 +148,18 @@ export default function MediaGallery({ media, price }) {
           Trier par
         </label>
 
-        <select
-          id="media-sort"
-          className={styles.sortSelect}
-          value={sortBy}
-          onChange={(event) => setSortBy(event.target.value)}
-        >
-          <option value="popularity">Popularité</option>
-          <option value="date">Date</option>
-          <option value="title">Titre</option>
-        </select>
+        <div className={styles.sortControl}>
+          <select
+            id="media-sort"
+            className={styles.sortSelect}
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value)}
+          >
+            <option value="popularity">Popularité</option>
+            <option value="date">Date</option>
+            <option value="title">Titre</option>
+          </select>
+        </div>
       </div>
 
       <div className={styles.gallery}>
@@ -239,7 +241,9 @@ export default function MediaGallery({ media, price }) {
         aria-label="Statistiques du photographe"
       >
         <span>
-          {totalLikes} <span aria-label="likes">♥</span>
+          <span aria-label={`${totalLikes} mentions J’aime`}>
+            {totalLikes} <span aria-hidden="true">♥</span>
+          </span>
         </span>
 
         <span>{price} € / jour</span>

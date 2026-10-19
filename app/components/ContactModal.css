@@ -9,7 +9,11 @@
   font-size: 17px;
   cursor: pointer;
 }
-.contact-trigger:hover { background: #6c1111; }
+.contact-trigger:hover,
+.contact-trigger:focus-visible {
+  background: #db8876;
+  color: #111;
+}
 .contact-trigger:focus-visible { outline: 3px solid #111; outline-offset: 4px; }
 
 .contact-dialog {
