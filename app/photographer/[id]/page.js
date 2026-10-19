@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import prisma from "../../../lib/prisma";
 import MediaGallery from "../../components/MediaGallery";
 import ContactModal from "../../components/ContactModal";
@@ -27,6 +28,9 @@ export default async function PhotographerPage({ params }) {
 
   return (
     <main className={styles.page}>
+      <Link href="/" className={styles.brand} aria-label="FishEye — retour à l’accueil">
+        Fish<span className={styles.brandMark}>◉</span>ye
+      </Link>
       <header className={styles.header}>
         <div className={styles.identity}>
           <h1 className={styles.name}>{photographer.name}</h1>
