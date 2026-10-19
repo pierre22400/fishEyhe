@@ -1,7 +1,7 @@
-
 import { notFound } from "next/navigation";
 import prisma from "../../../lib/prisma";
 import MediaGallery from "../../components/MediaGallery";
+import ContactModal from "../../components/ContactModal";
 
 export default async function PhotographerPage({ params }) {
   const { id } = await params;
@@ -26,7 +26,8 @@ export default async function PhotographerPage({ params }) {
   return (
     <main>
       <h1>{photographer.name}</h1>
-
+     <ContactModal photographer={photographer} />
+ 
       <section aria-label="Galerie du photographe">
         <MediaGallery media={photographerMedia} />
       </section>
