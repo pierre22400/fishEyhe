@@ -1,34 +1,15 @@
 /**
- * ============================================================
- * FISHEYE — COMPOSANT ContactModal
- * ============================================================
- *
- * Rôle :
- * Afficher et gérer le formulaire de contact d'un photographe.
- *
- * Fonctionnalités :
- * - Ouvrir la fenêtre modale depuis le bouton "Contactez-moi".
- * - Afficher le nom du photographe sélectionné.
- * - Saisir les informations du visiteur et son message.
- * - Fermer la modale et gérer son accessibilité.
- *
- * Architecture :
- * Client Component ("use client").
- * Utilise React pour gérer les interactions utilisateur.
- * Reçoit les informations du photographe via ses props.
- *
- * Utilisation :
- * Intégré à la page app/photographer/[id]/page.js.
- *
- * ============================================================
+ * FishEye — contact du photographe.
+ * Fenêtre native accessible : ouverture, fermeture et validation HTML.
  */
-
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
+import "./ContactModal.css";
 
 export default function ContactModal({ photographer }) {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef(null);
+  const titleId = useId();
 
   useEffect(() => {
     if (isOpen) {
@@ -38,51 +19,52 @@ export default function ContactModal({ photographer }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-
     const formData = new FormData(event.currentTarget);
-
     const firstName = formData.get("firstName");
-
     const lastName = formData.get("lastName");
     const email = formData.get("email");
     const message = formData.get("message");
-    console.log({
-      firstName,
-      lastName,
-      email,
-      message,
-    });
+    console.log({ firstName, lastName, email, message });
   }
+
   return (
     <>
-      <button type="button" onClick={() => setIsOpen(true)}>
+      <button
+        className="contact-trigger"
+        type="button"
+        onClick={() => setIsOpen(true)}
+      >
         Contactez-moi
       </button>
       {isOpen && (
         <dialog
+          className="contact-dialog"
           ref={modalRef}
-          aria-labelledby="contact-title"
+          aria-labelledby={titleId}
           onClose={() => setIsOpen(false)}
         >
           <button
+            className="contact-close"
             type="button"
             aria-label="Fermer la fenêtre de contact"
             onClick={() => modalRef.current?.close()}
           >
             ×
           </button>
-          <h2 id="contact-title">Contactez-moi</h2>
-          <p>{photographer.name}</p>
-          <form onSubmit={handleSubmit}>
+          <h2 className="contact-heading" id={titleId}>
+            Contactez-moi
+            <span>{photographer.name}</span>
+          </h2>
+          <form className="contact-form" onSubmit={handleSubmit}>
             <label htmlFor="firstName">Prénom</label>
-            <input id="firstName" name="firstName" type="text" required />
+            <input id="firstName" name="firstName" type="text" autoComplete="given-name" required />
             <label htmlFor="lastName">Nom</label>
-            <input id="lastName" name="lastName" type="text" required />
+            <input id="lastName" name="lastName" type="text" autoComplete="family-name" required />
             <label htmlFor="email">E-mail</label>
-            <input id="email" name="email" type="email" required />
+            <input id="email" name="email" type="email" autoComplete="email" required />
             <label htmlFor="message">Votre message</label>
-            <textarea rows={5} id="message" name="message" required></textarea>
-            <button type="submit">Envoyer</button>
+            <textarea id="message" rows={5} name="message" required />
+            <button className="contact-submit" type="submit">Envoyer</button>
           </form>
         </dialog>
       )}
