@@ -28,8 +28,13 @@ export default async function PhotographerPage({ params }) {
 
   return (
     <main className={styles.page}>
-      <Link href="/" className={styles.brand} aria-label="FishEye — retour à l’accueil">
-        Fish<span className={styles.brandMark}>◉</span>ye
+      <Link href="/" className={styles.brand}>
+        <Image
+          src="/images/logo.png"
+          alt="FishEye — Retour à l'accueil"
+          width={200}
+          height={50}
+        />
       </Link>
       <header className={styles.header}>
         <div className={styles.identity}>
