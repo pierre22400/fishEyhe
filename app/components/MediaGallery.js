@@ -1,5 +1,5 @@
 "use client";
-
+import styles from "../photographer/[id]/photographer.module.css";
 import MediaCard from "./MediaCard";
 
 import { useState, useRef, useEffect } from "react";
@@ -13,7 +13,7 @@ export default function MediaGallery({ media }) {
   const openerRef = useRef(null);
   // Reference to the modal container (associe cette référence à un élément HTML.)
   const modalRef = useRef(null);
-const [mediaList, setMediaList] = useState(media);
+  const [mediaList, setMediaList] = useState(media);
 
   // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
   //  Focus the close button when a media item is selected
@@ -28,33 +28,31 @@ const [mediaList, setMediaList] = useState(media);
     }
   }, [selectedMedia]);
 
+  async function handleLike(item) {
+    try {
+      const response = await fetch(`/api/media/${item.id}/like`, {
+        method: "POST",
+      });
 
-async function handleLike(item) {
-  try {
-    const response = await fetch(`/api/media/${item.id}/like`, {
-      method: "POST",
-    });
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'enregistrement du like");
+      }
 
-    if (!response.ok) {
-      throw new Error("Erreur lors de l'enregistrement du like");
+      const data = await response.json();
+
+      setMediaList((previousMedia) =>
+        previousMedia.map((mediaItem) =>
+          mediaItem.id === item.id
+            ? { ...mediaItem, likes: data.likes }
+            : mediaItem,
+        ),
+      );
+    } catch (error) {
+      console.error("Impossible d'enregistrer le like :", error);
     }
-
-    const data = await response.json();
-
-    setMediaList((previousMedia) =>
-      previousMedia.map((mediaItem) =>
-        mediaItem.id === item.id
-          ? { ...mediaItem, likes: data.likes }
-          : mediaItem
-      )
-    );
-  } catch (error) {
-    console.error("Impossible d'enregistrer le like :", error);
   }
-}
 
-
-const sortedMedia = [...mediaList].sort((a, b) => {
+  const sortedMedia = [...mediaList].sort((a, b) => {
     if (sortBy === "popularity") {
       return b.likes - a.likes;
     }
@@ -74,7 +72,7 @@ const sortedMedia = [...mediaList].sort((a, b) => {
     if (!selectedMedia || sortedMedia.length === 0) return;
 
     const currentIndex = sortedMedia.findIndex(
-      (item) => item.id === selectedMedia.id
+      (item) => item.id === selectedMedia.id,
     );
 
     const nextIndex = (currentIndex + 1) % sortedMedia.length;
@@ -86,7 +84,7 @@ const sortedMedia = [...mediaList].sort((a, b) => {
     if (!selectedMedia || sortedMedia.length === 0) return;
 
     const currentIndex = sortedMedia.findIndex(
-      (item) => item.id === selectedMedia.id
+      (item) => item.id === selectedMedia.id,
     );
 
     const previousIndex =
@@ -142,14 +140,16 @@ const sortedMedia = [...mediaList].sort((a, b) => {
         <option value="title">Titre</option>
       </select>
 
-      {sortedMedia.map((item) => (
-        <MediaCard
-          key={item.id}
-          media={item}
-          onSelect={(event) => handleOpen(event, item)}
-          onLike={() => handleLike(item)}
-        />
-      ))}
+      <div className={styles.gallery}>
+        {sortedMedia.map((item) => (
+          <MediaCard
+            key={item.id}
+            media={item}
+            onSelect={(event) => handleOpen(event, item)}
+            onLike={() => handleLike(item)}
+          />
+        ))}
+      </div>
 
       {selectedMedia && (
         <dialog
@@ -192,9 +192,7 @@ const sortedMedia = [...mediaList].sort((a, b) => {
         </dialog>
       )}
 
-      <p>
-        Média sélectionné : {selectedMedia?.title ?? "Aucun"}
-      </p>
+      <p>Média sélectionné : {selectedMedia?.title ?? "Aucun"}</p>
     </section>
   );
 }
