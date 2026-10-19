@@ -29,7 +29,6 @@ import { useState, useRef, useEffect } from "react";
 export default function ContactModal({ photographer }) {
   const [isOpen, setIsOpen] = useState(false);
   const modalRef = useRef(null);
-  
 
   useEffect(() => {
     if (isOpen) {
@@ -37,30 +36,34 @@ export default function ContactModal({ photographer }) {
     }
   }, [isOpen]);
 
-function handleSubmit(event) {
-  event.preventDefault();
+  function handleSubmit(event) {
+    event.preventDefault();
 
-  const formData = new FormData(event.currentTarget);
+    const formData = new FormData(event.currentTarget);
 
-  const firstName = formData.get("firstName");
+    const firstName = formData.get("firstName");
 
- const lastName = formData.get("lastName");
- const email = formData.get("email");
- const message = formData.get("message");
- console.log({
-  firstName,
-  lastName,
-  email,
-  message,
-});
-}
+    const lastName = formData.get("lastName");
+    const email = formData.get("email");
+    const message = formData.get("message");
+    console.log({
+      firstName,
+      lastName,
+      email,
+      message,
+    });
+  }
   return (
     <>
       <button type="button" onClick={() => setIsOpen(true)}>
         Contactez-moi
       </button>
       {isOpen && (
-        <dialog ref={modalRef} onClose={() => setIsOpen(false)}>
+        <dialog
+          ref={modalRef}
+          aria-labelledby="contact-title"
+          onClose={() => setIsOpen(false)}
+        >
           <button
             type="button"
             aria-label="Fermer la fenêtre de contact"
@@ -68,19 +71,19 @@ function handleSubmit(event) {
           >
             ×
           </button>
-          <h2>Contactez-moi</h2>
+          <h2 id="contact-title">Contactez-moi</h2>
           <p>{photographer.name}</p>
-        <form onSubmit={handleSubmit}>
-  <label htmlFor="firstName">Prénom</label>
-  <input id="firstName" name="firstName" type="text" />
-  <label htmlFor="lastName">Nom</label>
-  <input id="lastName" name="lastName" type="text" />
-  <label htmlFor="email">E-mail</label>
-  <input id="email" name="email" type="email" />
-<label htmlFor="message">Votre message</label>
-<textarea rows={5} id="message" name="message"></textarea>
-  <button type="submit">Envoyer</button>
-</form>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="firstName">Prénom</label>
+            <input id="firstName" name="firstName" type="text" required />
+            <label htmlFor="lastName">Nom</label>
+            <input id="lastName" name="lastName" type="text" required />
+            <label htmlFor="email">E-mail</label>
+            <input id="email" name="email" type="email" required />
+            <label htmlFor="message">Votre message</label>
+            <textarea rows={5} id="message" name="message" required></textarea>
+            <button type="submit">Envoyer</button>
+          </form>
         </dialog>
       )}
     </>
