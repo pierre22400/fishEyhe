@@ -49,7 +49,7 @@ export default async function PhotographerPage({ params }) {
       </header>
 
       <section aria-label="Galerie du photographe">
-        <MediaGallery media={photographerMedia} />
+        <MediaGallery media={photographerMedia} price={photographer.price} />
       </section>
     </main>
   );

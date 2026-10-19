@@ -1,10 +1,11 @@
 "use client";
 import styles from "../photographer/[id]/photographer.module.css";
 import MediaCard from "./MediaCard";
+import lightboxStyles from "./MediaLightbox.module.css";
 
 import { useState, useRef, useEffect } from "react";
 
-export default function MediaGallery({ media }) {
+export default function MediaGallery({ media, price }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [sortBy, setSortBy] = useState("popularity");
   // Reference to the close button (associe cette référence à un élément HTML.)
@@ -14,6 +15,9 @@ export default function MediaGallery({ media }) {
   // Reference to the modal container (associe cette référence à un élément HTML.)
   const modalRef = useRef(null);
   const [mediaList, setMediaList] = useState(media);
+
+  //parcourt tous les médias et additionne leurs likes
+  const totalLikes = mediaList.reduce((total, item) => total + item.likes, 0);
 
   // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
   //  Focus the close button when a media item is selected
@@ -93,19 +97,32 @@ export default function MediaGallery({ media }) {
     setSelectedMedia(sortedMedia[previousIndex]);
   }
 
-  function handleKeyDown(event) {
-    if (selectedMedia?.video) {
-      return;
-    }
 
-    if (event.key === "ArrowRight") {
-      handleNext();
-    }
-
-    if (event.key === "ArrowLeft") {
-      handlePrevious();
-    }
+function handleKeyDown(event) {
+  // Laisser les commandes du lecteur vidéo fonctionner.
+  if (event.target.closest("video")) {
+    return;
   }
+
+  // Ne pas intercepter les contrôles de formulaire.
+  if (
+    event.target.closest(
+      "input, textarea, select, [contenteditable='true']"
+    )
+  ) {
+    return;
+  }
+
+  if (event.key === "ArrowRight") {
+    event.preventDefault();
+    handleNext();
+  }
+
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    handlePrevious();
+  }
+}
 
   // Function to handle opening the media item and setting the opener reference
   //Cette fonction effectue deux opérations, dans cet ordre :
@@ -128,17 +145,24 @@ export default function MediaGallery({ media }) {
 
   return (
     <section aria-label="Galerie du photographe">
-      <label htmlFor="media-sort">Trier par : </label>
+   
 
-      <select
-        id="media-sort"
-        value={sortBy}
-        onChange={(event) => setSortBy(event.target.value)}
-      >
-        <option value="popularity">Popularité</option>
-        <option value="date">Date</option>
-        <option value="title">Titre</option>
-      </select>
+      <div className={styles.sortBar}>
+        <label htmlFor="media-sort" className={styles.sortLabel}>
+          Trier par
+        </label>
+
+        <select
+          id="media-sort"
+          className={styles.sortSelect}
+          value={sortBy}
+          onChange={(event) => setSortBy(event.target.value)}
+        >
+          <option value="popularity">Popularité</option>
+          <option value="date">Date</option>
+          <option value="title">Titre</option>
+        </select>
+      </div>
 
       <div className={styles.gallery}>
         {sortedMedia.map((item) => (
@@ -154,45 +178,74 @@ export default function MediaGallery({ media }) {
       {selectedMedia && (
         <dialog
           ref={modalRef}
+          className={lightboxStyles.dialog}
           aria-labelledby="media-dialog-title"
           onCancel={handleCancel}
           onKeyDown={handleKeyDown}
         >
-          <h2 id="media-dialog-title">{selectedMedia.title}</h2>
-
-          {selectedMedia.image ? (
-            <img
-              src={`/images/${selectedMedia.image}`}
-              alt={selectedMedia.title}
-            />
-          ) : (
-            <video
-              src={`/images/${selectedMedia.video}`}
-              controls
-              aria-label={selectedMedia.title}
-            />
-          )}
-
-          <button type="button" onClick={handlePrevious}>
-            ← Précédent
-          </button>
-
-          <button type="button" onClick={handleNext}>
-            Suivant →
+          <button
+            ref={closeButtonRef}
+            type="button"
+            className={lightboxStyles.close}
+            onClick={handleClose}
+            aria-label="Fermer la lightbox"
+          >
+            ×
           </button>
 
           <button
-            // Reference to the close button (associe cette référence à un élément HTML.)
-            ref={closeButtonRef}
             type="button"
-            onClick={handleClose}
+            className={lightboxStyles.previous}
+            onClick={handlePrevious}
+            aria-label="Média précédent"
           >
-            Fermer
+            ‹
+          </button>
+
+          <div className={lightboxStyles.content}>
+            {selectedMedia.image ? (
+              <img
+                className={lightboxStyles.media}
+                src={`/images/${selectedMedia.image}`}
+                alt={selectedMedia.title}
+              />
+            ) : (
+              <video
+                key={selectedMedia.id}
+                className={lightboxStyles.media}
+                src={`/images/${selectedMedia.video}`}
+                controls
+                aria-label={selectedMedia.title}
+              />
+            )}
+
+            <h2 id="media-dialog-title" className={lightboxStyles.title}>
+              {selectedMedia.title}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            className={lightboxStyles.next}
+            onClick={handleNext}
+            aria-label="Média suivant"
+          >
+            ›
           </button>
         </dialog>
       )}
 
-      <p>Média sélectionné : {selectedMedia?.title ?? "Aucun"}</p>
+     
+      <aside
+        className={styles.likesPanel}
+        aria-label="Statistiques du photographe"
+      >
+        <span>
+          {totalLikes} <span aria-label="likes">♥</span>
+        </span>
+
+        <span>{price} € / jour</span>
+      </aside>
     </section>
   );
 }
