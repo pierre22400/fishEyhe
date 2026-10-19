@@ -24,23 +24,31 @@
  */
 
 "use client";
-
-import { useState } from "react";
-
-
-
+import { useState, useRef, useEffect } from "react";
 
 export default function ContactModal({ photographer }) {
-    const [isOpen, setIsOpen] = useState(false);
-    return (
-        <>
-    <button type="button" onClick={() => setIsOpen(true)}>
-        Contactez-moi
-        </button>
-        {isOpen && (
-  <p>La fenêtre est ouverte !</p>
-)}
-</>
-        );
+  const [isOpen, setIsOpen] = useState(false);
+  const modalRef = useRef(null);
 
+ 
+
+
+  useEffect(() => {
+  if (isOpen) {
+    modalRef.current?.showModal();
+  }
+}, [isOpen]);
+  return (
+    <>
+      <button type="button" onClick={() => setIsOpen(true)}>
+        Contactez-moi
+      </button>
+      {isOpen && (
+        <dialog ref={modalRef}>
+          <h2>Contactez-moi</h2>
+          <p>{photographer.name}</p>
+        </dialog>
+      )}
+    </>
+  );
 }
