@@ -3,6 +3,7 @@ import prisma from "../../../lib/prisma";
 import MediaGallery from "../../components/MediaGallery";
 import ContactModal from "../../components/ContactModal";
 import styles from "./photographer.module.css";
+import Image from "next/image";
 
 export default async function PhotographerPage({ params }) {
   const { id } = await params;
@@ -41,10 +42,12 @@ export default async function PhotographerPage({ params }) {
           <ContactModal photographer={photographer} />
         </div>
 
-        <img
+        <Image
           className={styles.portrait}
           src={`/images/${photographer.portrait}`}
-          alt={photographer.name}
+          alt={`Portrait de ${photographer.name}`}
+          width={200}
+          height={200}
         />
       </header>
 

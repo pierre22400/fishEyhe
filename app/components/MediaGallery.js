@@ -2,6 +2,7 @@
 import styles from "../photographer/[id]/photographer.module.css";
 import MediaCard from "./MediaCard";
 import lightboxStyles from "./MediaLightbox.module.css";
+import Image from "next/image";
 
 import { useState, useRef, useEffect } from "react";
 
@@ -97,32 +98,29 @@ export default function MediaGallery({ media, price }) {
     setSelectedMedia(sortedMedia[previousIndex]);
   }
 
+  function handleKeyDown(event) {
+    // Laisser les commandes du lecteur vidéo fonctionner.
+    if (event.target.closest("video")) {
+      return;
+    }
 
-function handleKeyDown(event) {
-  // Laisser les commandes du lecteur vidéo fonctionner.
-  if (event.target.closest("video")) {
-    return;
-  }
+    // Ne pas intercepter les contrôles de formulaire.
+    if (
+      event.target.closest("input, textarea, select, [contenteditable='true']")
+    ) {
+      return;
+    }
 
-  // Ne pas intercepter les contrôles de formulaire.
-  if (
-    event.target.closest(
-      "input, textarea, select, [contenteditable='true']"
-    )
-  ) {
-    return;
-  }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleNext();
+    }
 
-  if (event.key === "ArrowRight") {
-    event.preventDefault();
-    handleNext();
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handlePrevious();
+    }
   }
-
-  if (event.key === "ArrowLeft") {
-    event.preventDefault();
-    handlePrevious();
-  }
-}
 
   // Function to handle opening the media item and setting the opener reference
   //Cette fonction effectue deux opérations, dans cet ordre :
@@ -145,8 +143,6 @@ function handleKeyDown(event) {
 
   return (
     <section aria-label="Galerie du photographe">
-   
-
       <div className={styles.sortBar}>
         <label htmlFor="media-sort" className={styles.sortLabel}>
           Trier par
@@ -204,10 +200,13 @@ function handleKeyDown(event) {
 
           <div className={lightboxStyles.content}>
             {selectedMedia.image ? (
-              <img
+              <Image
                 className={lightboxStyles.media}
                 src={`/images/${selectedMedia.image}`}
                 alt={selectedMedia.title}
+                width={1000}
+                height={750}
+                sizes="(max-width: 1100px) 80vw, 1000px"
               />
             ) : (
               <video
@@ -235,7 +234,6 @@ function handleKeyDown(event) {
         </dialog>
       )}
 
-     
       <aside
         className={styles.likesPanel}
         aria-label="Statistiques du photographe"
