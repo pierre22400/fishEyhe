@@ -1,36 +1,179 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FishEye
 
-## Getting Started
+**Projet 5 — Parcours Développeur React, OpenClassrooms**
 
-First, run the development server:
+FishEye est une application web permettant de découvrir des photographes professionnels et de consulter leurs réalisations.
+
+Ce projet met l'accent sur l'organisation du code, l'interactivité des composants React et l'accessibilité des interfaces.
+
+## Fonctionnalités
+
+- Affichage d'une liste de photographes.
+- Consultation d'une page individuelle pour chaque photographe.
+- Galerie de photographies et de vidéos.
+- Tri des médias par popularité, date ou titre.
+- Lightbox avec navigation au clavier.
+- Formulaire de contact avec validation des champs.
+- Système de likes avec compteur actualisé.
+- Prévention des likes multiples pour un même navigateur et un même média.
+- Conservation des likes après actualisation de la page.
+- Gestion des états de chargement et des erreurs lors de l'enregistrement des likes.
+
+## Technologies
+
+- **Next.js 16** — Framework React et routage.
+- **React 19** — Composants interactifs.
+- **JavaScript** — Logique applicative.
+- **CSS / CSS Modules** — Mise en forme.
+- **Prisma 7** — Accès aux données et migrations.
+- **SQLite** — Base de données locale.
+- **ESLint** — Analyse statique du code.
+
+## Installation
+
+### 1. Prérequis
+
+- Node.js et npm.
+- Git.
+- Une base SQLite locale configurée.
+
+### 2. Cloner le dépôt
+
+```bash
+git clone https://github.com/pierre22400/fishEyhe.git
+cd fishEyhe
+```
+
+### 3. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 4. Configurer la base de données
+
+Créer un fichier `.env` à la racine du projet :
+
+```env
+DATABASE_URL="file:./dev.db"
+```
+
+Appliquer les migrations :
+
+```bash
+npx prisma migrate deploy
+```
+
+Générer le client Prisma :
+
+```bash
+npx prisma generate
+```
+
+**Important :** les migrations créent la structure de la base, mais ne garantissent pas la présence de photographes et de médias. Une base initialisée avec les données du projet est nécessaire pour afficher les galeries.
+
+### 5. Démarrer l'application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir ensuite :
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Sous Windows PowerShell, si l'exécution des scripts npm est bloquée, utiliser `npm.cmd` et `npx.cmd`.
 
-## Learn More
+## Structure du projet
 
-To learn more about Next.js, take a look at the following resources:
+```text
+app/
+  api/
+    media/[id]/like/       API d'enregistrement des likes
+  components/              Composants React
+  photographer/[id]/       Pages des photographes
+  generated/prisma/        Client Prisma généré
+  page.js                  Page d'accueil
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+lib/
+  photographers.js         Requêtes liées aux photographes
+  likes.js                 Gestion des likes uniques
+  prisma.js                Connexion Prisma
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+prisma/
+  migrations/              Historique des migrations
+  schema.prisma            Modèle de données
 
-## Deploy on Vercel
+public/
+  images/                  Ressources visuelles
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Navigation et accessibilité
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+L'application utilise des éléments HTML sémantiques, des libellés accessibles et des composants interactifs utilisables au clavier.
+
+La lightbox permet notamment :
+
+- `Entrée` : ouvrir un média depuis son bouton.
+- `Flèche droite` : afficher le média suivant.
+- `Flèche gauche` : afficher le média précédent.
+- `Échap` : fermer la lightbox.
+- `Tab` : naviguer entre les commandes.
+
+La fermeture de la lightbox restaure le focus vers le bouton d'ouverture.
+
+**Un contrôle d'accessibilité complet reste à effectuer.** Aucune conformité WCAG ou RGAA n'est revendiquée à ce stade.
+
+## Fonctionnement des likes
+
+Les likes sont enregistrés dans SQLite par l'intermédiaire d'une API Next.js.
+
+Chaque navigateur reçoit un identifiant conservé dans un cookie. Une contrainte d'unicité dans la base de données empêche l'enregistrement de plusieurs likes pour un même média et un même identifiant visiteur.
+
+Après un like :
+
+- Le compteur est actualisé.
+- Le bouton est désactivé.
+- L'état est conservé après actualisation de la page.
+
+Ce mécanisme limite les doublons par navigateur. Il ne constitue pas une authentification des utilisateurs et ne garantit pas une unicité par personne physique.
+
+## Formulaire de contact
+
+Le formulaire permet de saisir un prénom, un nom, une adresse e-mail et un message.
+
+Les champs obligatoires sont validés par le navigateur. Après une soumission valide, les informations sont affichées dans la console et la fenêtre se ferme.
+
+**Aucun e-mail n'est envoyé** : le formulaire est une fonctionnalité de démonstration.
+
+## Vérifications techniques
+
+Exécuter :
+
+```bash
+npm run lint
+npm run build
+```
+
+Les dernières qualifications locales ont validé :
+
+- ESLint : PASS.
+- Build de production Next.js : PASS.
+- Affichage des médias : PASS.
+- Tri des galeries : PASS.
+- Navigation clavier dans la lightbox : PASS.
+- Prévention des likes multiples : PASS.
+- Persistance des likes après rechargement : PASS.
+- Migration SQLite : PASS.
+
+Ces résultats correspondent à la qualification locale du 25 octobre 2026 et ne remplacent pas une campagne complète de tests automatisés ou d'accessibilité.
+
+## Statut du projet
+
+Projet développé dans le cadre de la formation OpenClassrooms.
+
+Les corrections fonctionnelles issues des retours du mentor ont été intégrées et testées localement. Le contrôle d'accessibilité final reste à réaliser.
+
+## Auteur
+
+Projet personnel réalisé dans le cadre du parcours Développeur React d'OpenClassrooms.
