@@ -17,6 +17,7 @@ export default function ContactModal({ photographer }) {
     }
   }, [isOpen]);
 
+  // Gestion de la soumission du formulaire
   function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -25,6 +26,7 @@ export default function ContactModal({ photographer }) {
     const email = formData.get("email");
     const message = formData.get("message");
     console.log({ firstName, lastName, email, message });
+    modalRef.current?.close();
   }
 
   return (
