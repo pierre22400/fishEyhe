@@ -159,3 +159,7 @@
   .sortBar { gap: 12px; }
   .sortSelect { min-width: 140px; }
 }
+
+/* États visibles des opérations asynchrones. */
+.likeStatus { margin: 0 0 14px; color: #525252; font-size: 15px; }
+.likeError { margin: 0 0 14px; color: #901c1c; font-size: 15px; font-weight: 600; }
