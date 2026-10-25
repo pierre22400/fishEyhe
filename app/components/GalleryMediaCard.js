@@ -1,7 +1,10 @@
-import styles from "./MediaCard.module.css";
+
+import styles from "./GalleryMediaCard.module.css";
 import Image from "next/image";
 
-export default function MediaCard({ media, onSelect, onLike }) {
+export default function GalleryMediaCard({
+  media, onSelect, onLike, hasLiked, isPending, likesDisabled,
+}) {
   return (
     <article className={styles.card}>
       <button
@@ -29,15 +32,20 @@ export default function MediaCard({ media, onSelect, onLike }) {
           />
         )}
       </button>
-
       <div className={styles.info}>
         <h2 className={styles.title}>{media.title}</h2>
-
         <button
           type="button"
           className={styles.likeButton}
           onClick={onLike}
-          aria-label={`Aimer ${media.title}, ${media.likes} likes`}
+          disabled={hasLiked || likesDisabled}
+          aria-label={
+            hasLiked
+              ? `Déjà aimé : ${media.title}, ${media.likes} mentions J’aime`
+              : isPending
+                ? `Enregistrement du like pour ${media.title}`
+                : `Aimer ${media.title}, ${media.likes} mentions J’aime`
+          }
         >
           <span>{media.likes}</span>
           <span aria-hidden="true">♥</span>

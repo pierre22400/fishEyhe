@@ -52,7 +52,8 @@
   outline: 3px solid #901c1c;
   outline-offset: 4px;
 }
-.likeButton:hover { color: #d3573c; }
+.likeButton:not(:disabled):hover { color: #d3573c; }
+.likeButton:disabled { cursor: not-allowed; opacity: 0.7; }
 @media (max-width: 1100px) {
   .image { height: 260px; }
 }

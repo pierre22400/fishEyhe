@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import prisma from "../../../lib/prisma";
-import MediaGallery from "../../components/MediaGallery";
+import { getPhotographerById, getPhotographerMedia } from "../../../lib/photographers";
+import { getLikedMediaIds, VISITOR_COOKIE } from "../../../lib/likes";
+import { cookies } from "next/headers";
+import PhotographerGallery from "../../components/PhotographerGallery";
 import ContactModal from "../../components/ContactModal";
 import styles from "./photographer.module.css";
 import Image from "next/image";
@@ -14,17 +16,18 @@ export default async function PhotographerPage({ params }) {
     notFound();
   }
 
-  const photographer = await prisma.photographer.findUnique({
-    where: { id: photographerId },
-  });
+  const photographer = await getPhotographerById(photographerId);
 
   if (!photographer) {
     notFound();
   }
 
-  const photographerMedia = await prisma.media.findMany({
-    where: { photographerId },
-  });
+  const photographerMedia = await getPhotographerMedia(photographerId);
+  const visitorId = (await cookies()).get(VISITOR_COOKIE)?.value;
+  const likedMediaIds = await getLikedMediaIds(
+    visitorId,
+    photographerMedia.map((item) => item.id),
+  );
 
   return (
     <main className={styles.page}>
@@ -61,7 +64,11 @@ export default async function PhotographerPage({ params }) {
       </header>
 
       <section aria-label="Galerie du photographe">
-        <MediaGallery media={photographerMedia} price={photographer.price} />
+        <PhotographerGallery
+          media={photographerMedia}
+          price={photographer.price}
+          likedMediaIds={likedMediaIds}
+        />
       </section>
     </main>
   );

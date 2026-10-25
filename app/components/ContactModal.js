@@ -25,6 +25,7 @@ export default function ContactModal({ photographer }) {
     const email = formData.get("email");
     const message = formData.get("message");
     console.log({ firstName, lastName, email, message });
+    modalRef.current?.close();
   }
 
   return (

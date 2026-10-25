@@ -1,13 +1,9 @@
 import PhotographerCard from "./components/PhotographerCard";
-import prisma from "../lib/prisma";
+import { getPhotographers } from "../lib/photographers";
 import Image from "next/image";
 
 export default async function Home() {
-  const photographers = await prisma.photographer.findMany({
-    orderBy: {
-      id: "asc",
-    },
-  });
+  const photographers = await getPhotographers();
 
   return (
     <main>
