@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import prisma from "../../../lib/prisma";
+import { getPhotographerById } from "@/lib/photographers";
 import MediaGallery from "../../components/MediaGallery";
 import ContactModal from "../../components/ContactModal";
 import styles from "./photographer.module.css";
@@ -14,17 +14,13 @@ export default async function PhotographerPage({ params }) {
     notFound();
   }
 
-  const photographer = await prisma.photographer.findUnique({
-    where: { id: photographerId },
-  });
+  const result = await getPhotographerById(photographerId);
 
-  if (!photographer) {
+  if (!result) {
     notFound();
   }
 
-  const photographerMedia = await prisma.media.findMany({
-    where: { photographerId },
-  });
+  const { photographer, media: photographerMedia } = result;
 
   return (
     <main className={styles.page}>
