@@ -6,12 +6,13 @@ import styles from "../photographer/[id]/photographer.module.css";
 import MediaCard from "./MediaCard";
 import MediaLightbox from "./MediaLightbox";
 
-export default function MediaGallery({ media, price }) {
+export default function MediaGallery({ media, price, likedMediaIds = [] }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [sortBy, setSortBy] = useState("popularity");
   const [mediaList, setMediaList] = useState(media);
   const [likeError, setLikeError] = useState("");
   const [pendingMediaId, setPendingMediaId] = useState(null);
+  const [likedIds, setLikedIds] = useState(() => new Set(likedMediaIds));
 
   // Mémorise le bouton qui a ouvert la lightbox.
   const openerRef = useRef(null);
@@ -24,7 +25,7 @@ export default function MediaGallery({ media, price }) {
 
   // Enregistre un like et met à jour le média concerné.
 async function handleLike(item) {
-  if (pendingMediaId !== null) return;
+  if (pendingMediaId !== null || likedIds.has(item.id)) return;
 
   setPendingMediaId(item.id);
   setLikeError("");
@@ -39,6 +40,7 @@ async function handleLike(item) {
     }
 
     const data = await response.json();
+    setLikedIds((previous) => new Set(previous).add(item.id));
 
     setMediaList((previousMedia) =>
       previousMedia.map((mediaItem) =>
@@ -118,6 +120,7 @@ async function handleLike(item) {
   onSelect={(event) => handleOpen(event, item)}
   onLike={() => handleLike(item)}
   isLoading={pendingMediaId === item.id}
+  isLiked={likedIds.has(item.id)}
 />
         ))}
       </div>
@@ -144,3 +147,4 @@ async function handleLike(item) {
     </section>
   );
 }
+

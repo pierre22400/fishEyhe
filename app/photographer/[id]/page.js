@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { getLikedMediaIds, VISITOR_COOKIE } from "@/lib/likes";
 import Link from "next/link";
 import { getPhotographerById } from "@/lib/photographers";
 import MediaGallery from "../../components/MediaGallery";
@@ -21,6 +23,9 @@ export default async function PhotographerPage({ params }) {
   }
 
   const { photographer, media: photographerMedia } = result;
+  const cookieStore = await cookies();
+  const visitorId = cookieStore.get(VISITOR_COOKIE)?.value;
+  const likedMediaIds = await getLikedMediaIds(visitorId, photographerMedia.map((item) => item.id));
 
   return (
     <main className={styles.page}>
@@ -57,8 +62,9 @@ export default async function PhotographerPage({ params }) {
       </header>
 
       <section aria-label="Galerie du photographe">
-        <MediaGallery media={photographerMedia} price={photographer.price} />
+        <MediaGallery media={photographerMedia} price={photographer.price} likedMediaIds={likedMediaIds} />
       </section>
     </main>
   );
 }
+

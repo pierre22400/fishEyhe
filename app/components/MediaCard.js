@@ -6,6 +6,7 @@ export default function MediaCard({
   onSelect,
   onLike,
   isLoading = false,
+  isLiked = false,
 }) {
   return (
     <article className={styles.card}>
@@ -40,8 +41,9 @@ export default function MediaCard({
           type="button"
           className={styles.likeButton}
           onClick={onLike}
-          disabled={isLoading}
-          aria-label={`Aimer ${media.title}, ${media.likes} likes`}
+          disabled={isLoading || isLiked}
+          aria-pressed={isLiked}
+          aria-label={isLiked ? `${media.title} : déjà aimé, ${media.likes} likes` : `Aimer ${media.title}, ${media.likes} likes`}
         >
           <span>{media.likes}</span>
           <span aria-hidden="true">♥</span>

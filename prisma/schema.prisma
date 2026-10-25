@@ -32,4 +32,14 @@ model Media {
   likes          Int
   date           String
   price          Int
+  mediaLikes     MediaLike[]
+}
+
+model MediaLike {
+  id        Int    @id @default(autoincrement())
+  mediaId   Int
+  visitorId String
+  media     Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@unique([mediaId, visitorId])
 }
