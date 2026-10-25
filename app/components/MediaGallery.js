@@ -10,6 +10,8 @@ export default function MediaGallery({ media, price }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [sortBy, setSortBy] = useState("popularity");
   const [mediaList, setMediaList] = useState(media);
+  const [likeError, setLikeError] = useState("");
+  const [pendingMediaId, setPendingMediaId] = useState(null);
 
   // Mémorise le bouton qui a ouvert la lightbox.
   const openerRef = useRef(null);
@@ -21,7 +23,13 @@ export default function MediaGallery({ media, price }) {
   );
 
   // Enregistre un like et met à jour le média concerné.
-  async function handleLike(item) {
+async function handleLike(item) {
+  setPendingMediaId(item.id);
+  setLikeError("");
+  if (pendingMediaId !== null) return;
+
+  try {
+    
     try {
       const response = await fetch(`/api/media/${item.id}/like`, {
         method: "POST",
@@ -40,9 +48,13 @@ export default function MediaGallery({ media, price }) {
             : mediaItem,
         ),
       );
-    } catch (error) {
-      console.error("Impossible d'enregistrer le like :", error);
     }
+    catch (error) {
+      setLikeError("Impossible d'enregistrer votre like. Veuillez réessayer.");
+    }
+    finally {
+  setPendingMediaId(null);
+}
   }
 
   // Trie les médias selon le critère sélectionné.
@@ -94,15 +106,20 @@ export default function MediaGallery({ media, price }) {
           </select>
         </div>
       </div>
-
+      {likeError && (
+        <p role="alert">
+          {likeError}
+        </p>
+      )}
       <div className={styles.gallery}>
         {sortedMedia.map((item) => (
-          <MediaCard
-            key={item.id}
-            media={item}
-            onSelect={(event) => handleOpen(event, item)}
-            onLike={() => handleLike(item)}
-          />
+<MediaCard
+  key={item.id}
+  media={item}
+  onSelect={(event) => handleOpen(event, item)}
+  onLike={() => handleLike(item)}
+  isLoading={pendingMediaId === item.id}
+/>
         ))}
       </div>
 
