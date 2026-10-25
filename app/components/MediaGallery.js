@@ -24,38 +24,37 @@ export default function MediaGallery({ media, price }) {
 
   // Enregistre un like et met à jour le média concerné.
 async function handleLike(item) {
-  setPendingMediaId(item.id);
-  setLikeError("");
   if (pendingMediaId !== null) return;
 
+  setPendingMediaId(item.id);
+  setLikeError("");
+
   try {
-    
-    try {
-      const response = await fetch(`/api/media/${item.id}/like`, {
-        method: "POST",
-      });
+    const response = await fetch(`/api/media/${item.id}/like`, {
+      method: "POST",
+    });
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de l'enregistrement du like");
-      }
-
-      const data = await response.json();
-
-      setMediaList((previousMedia) =>
-        previousMedia.map((mediaItem) =>
-          mediaItem.id === item.id
-            ? { ...mediaItem, likes: data.likes }
-            : mediaItem,
-        ),
-      );
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'enregistrement du like");
     }
-    catch (error) {
-      setLikeError("Impossible d'enregistrer votre like. Veuillez réessayer.");
-    }
-    finally {
-  setPendingMediaId(null);
-}
+
+    const data = await response.json();
+
+    setMediaList((previousMedia) =>
+      previousMedia.map((mediaItem) =>
+        mediaItem.id === item.id
+          ? { ...mediaItem, likes: data.likes }
+          : mediaItem,
+      ),
+    );
+  } catch (error) {
+    setLikeError(
+      "Impossible d'enregistrer votre like. Veuillez réessayer.",
+    );
+  } finally {
+    setPendingMediaId(null);
   }
+}
 
   // Trie les médias selon le critère sélectionné.
   const sortedMedia = [...mediaList].sort((a, b) => {
