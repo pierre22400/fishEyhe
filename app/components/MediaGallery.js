@@ -1,38 +1,26 @@
+
 "use client";
+
+import { useState, useRef } from "react";
 import styles from "../photographer/[id]/photographer.module.css";
 import MediaCard from "./MediaCard";
-import lightboxStyles from "./MediaLightbox.module.css";
-import Image from "next/image";
-
-import { useState, useRef, useEffect } from "react";
+import MediaLightbox from "./MediaLightbox";
 
 export default function MediaGallery({ media, price }) {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [sortBy, setSortBy] = useState("popularity");
-  // Reference to the close button (associe cette référence à un élément HTML.)
-  const closeButtonRef = useRef(null);
-  // Reference to the opener button (associe cette référence à un élément HTML.)
-  const openerRef = useRef(null);
-  // Reference to the modal container (associe cette référence à un élément HTML.)
-  const modalRef = useRef(null);
   const [mediaList, setMediaList] = useState(media);
 
-  //parcourt tous les médias et additionne leurs likes
-  const totalLikes = mediaList.reduce((total, item) => total + item.likes, 0);
+  // Mémorise le bouton qui a ouvert la lightbox.
+  const openerRef = useRef(null);
 
-  // ouvre le dialogue avec showModal() s'il n'est pas déjà ouvert.
-  //  Focus the close button when a media item is selected
-  useEffect(() => {
-    if (selectedMedia) {
-      if (!modalRef.current?.open) {
-        //éviter de demander l'ouverture d'un dialogue déjà ouvert.
-        modalRef.current?.showModal();
-      }
+  // Calcule le nombre total de likes.
+  const totalLikes = mediaList.reduce(
+    (total, item) => total + item.likes,
+    0,
+  );
 
-      closeButtonRef.current?.focus();
-    }
-  }, [selectedMedia]);
-
+  // Enregistre un like et met à jour le média concerné.
   async function handleLike(item) {
     try {
       const response = await fetch(`/api/media/${item.id}/like`, {
@@ -57,6 +45,7 @@ export default function MediaGallery({ media, price }) {
     }
   }
 
+  // Trie les médias selon le critère sélectionné.
   const sortedMedia = [...mediaList].sort((a, b) => {
     if (sortBy === "popularity") {
       return b.likes - a.likes;
@@ -73,72 +62,16 @@ export default function MediaGallery({ media, price }) {
     return 0;
   });
 
-  function handleNext() {
-    if (!selectedMedia || sortedMedia.length === 0) return;
-
-    const currentIndex = sortedMedia.findIndex(
-      (item) => item.id === selectedMedia.id,
-    );
-
-    const nextIndex = (currentIndex + 1) % sortedMedia.length;
-
-    setSelectedMedia(sortedMedia[nextIndex]);
-  }
-
-  function handlePrevious() {
-    if (!selectedMedia || sortedMedia.length === 0) return;
-
-    const currentIndex = sortedMedia.findIndex(
-      (item) => item.id === selectedMedia.id,
-    );
-
-    const previousIndex =
-      (currentIndex - 1 + sortedMedia.length) % sortedMedia.length;
-
-    setSelectedMedia(sortedMedia[previousIndex]);
-  }
-
-  function handleKeyDown(event) {
-    // Laisser les commandes du lecteur vidéo fonctionner.
-    if (event.target.closest("video")) {
-      return;
-    }
-
-    // Ne pas intercepter les contrôles de formulaire.
-    if (
-      event.target.closest("input, textarea, select, [contenteditable='true']")
-    ) {
-      return;
-    }
-
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      handleNext();
-    }
-
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      handlePrevious();
-    }
-  }
-
-  // Function to handle opening the media item and setting the opener reference
-  //Cette fonction effectue deux opérations, dans cet ordre :
-  // 1. Elle mémorise le bouton qui a ouvert la modale.
-  // 2. Elle sélectionne le média pour afficher la modale
+  // Ouvre la lightbox et mémorise le bouton d'origine.
   function handleOpen(event, item) {
     openerRef.current = event.currentTarget;
     setSelectedMedia(item);
   }
 
-  // Function to handle closing the media item and returning focus to the opener
+  // Ferme la lightbox et restaure le focus.
   function handleClose() {
     setSelectedMedia(null);
     openerRef.current?.focus();
-  }
-  function handleCancel(event) {
-    event.preventDefault();
-    handleClose();
   }
 
   return (
@@ -173,68 +106,12 @@ export default function MediaGallery({ media, price }) {
         ))}
       </div>
 
-      {selectedMedia && (
-        <dialog
-          ref={modalRef}
-          className={lightboxStyles.dialog}
-          aria-labelledby="media-dialog-title"
-          onCancel={handleCancel}
-          onKeyDown={handleKeyDown}
-        >
-          <button
-            ref={closeButtonRef}
-            type="button"
-            className={lightboxStyles.close}
-            onClick={handleClose}
-            aria-label="Fermer la lightbox"
-          >
-            ×
-          </button>
-
-          <button
-            type="button"
-            className={lightboxStyles.previous}
-            onClick={handlePrevious}
-            aria-label="Média précédent"
-          >
-            ‹
-          </button>
-
-          <div className={lightboxStyles.content}>
-            {selectedMedia.image ? (
-              <Image
-                className={lightboxStyles.media}
-                src={`/images/${selectedMedia.image}`}
-                alt={selectedMedia.title}
-                width={1000}
-                height={750}
-                sizes="(max-width: 1100px) 80vw, 1000px"
-              />
-            ) : (
-              <video
-                key={selectedMedia.id}
-                className={lightboxStyles.media}
-                src={`/images/${selectedMedia.video}`}
-                controls
-                aria-label={selectedMedia.title}
-              />
-            )}
-
-            <h2 id="media-dialog-title" className={lightboxStyles.title}>
-              {selectedMedia.title}
-            </h2>
-          </div>
-
-          <button
-            type="button"
-            className={lightboxStyles.next}
-            onClick={handleNext}
-            aria-label="Média suivant"
-          >
-            ›
-          </button>
-        </dialog>
-      )}
+      <MediaLightbox
+        selectedMedia={selectedMedia}
+        media={sortedMedia}
+        onSelect={setSelectedMedia}
+        onClose={handleClose}
+      />
 
       <aside
         className={styles.likesPanel}
