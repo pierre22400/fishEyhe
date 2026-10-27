@@ -56,14 +56,14 @@ main {
   padding: 40px 60px;
 }
 
-main > h1 {
+main>h1 {
   color: var(--primary);
   font-size: 36px;
   font-weight: 400;
   margin-bottom: 12px;
 }
 
-main > p {
+main>p {
   color: #525252;
   margin-bottom: 50px;
 }

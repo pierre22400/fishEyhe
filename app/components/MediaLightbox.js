@@ -5,133 +5,133 @@ import Image from "next/image";
 import styles from "./MediaLightbox.module.css";
 
 export default function MediaLightbox({
-  selectedMedia,
-  media,
-  onSelect,
-  onClose,
+    selectedMedia,
+    media,
+    onSelect,
+    onClose,
 }) {
-  const modalRef = useRef(null);
-  const closeButtonRef = useRef(null);
+    const modalRef = useRef(null);
+    const closeButtonRef = useRef(null);
 
-  useEffect(() => {
-    if (selectedMedia && modalRef.current && !modalRef.current.open) {
-      modalRef.current.showModal();
-      closeButtonRef.current?.focus();
-    }
-  }, [selectedMedia]);
+    useEffect(() => {
+        if (selectedMedia && modalRef.current && !modalRef.current.open) {
+            modalRef.current.showModal();
+            closeButtonRef.current?.focus();
+        }
+    }, [selectedMedia]);
 
-  if (!selectedMedia) return null;
+    if (!selectedMedia) return null;
 
-  function handleClose() {
-    modalRef.current?.close();
-    onClose();
-  }
-
-  function handleNext() {
-    const index = media.findIndex(
-      (item) => item.id === selectedMedia.id,
-    );
-
-    if (index === -1) return;
-
-    onSelect(media[(index + 1) % media.length]);
-  }
-
-  function handlePrevious() {
-    const index = media.findIndex(
-      (item) => item.id === selectedMedia.id,
-    );
-
-    if (index === -1) return;
-
-    onSelect(media[(index - 1 + media.length) % media.length]);
-  }
-
-  function handleKeyDown(event) {
-    if (
-      event.target.closest(
-        "video, input, textarea, select, [contenteditable='true']",
-      )
-    ) {
-      return;
+    function handleClose() {
+        modalRef.current?.close();
+        onClose();
     }
 
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      handleNext();
+    function handleNext() {
+        const index = media.findIndex(
+            (item) => item.id === selectedMedia.id,
+        );
+
+        if (index === -1) return;
+
+        onSelect(media[(index + 1) % media.length]);
     }
 
-    if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      handlePrevious();
+    function handlePrevious() {
+        const index = media.findIndex(
+            (item) => item.id === selectedMedia.id,
+        );
+
+        if (index === -1) return;
+
+        onSelect(media[(index - 1 + media.length) % media.length]);
     }
-  }
 
-  return (
-    <dialog
-      ref={modalRef}
-      className={styles.dialog}
-      aria-labelledby="media-dialog-title"
-      onCancel={(event) => {
-        event.preventDefault();
-        handleClose();
-      }}
-      onKeyDown={handleKeyDown}
-    >
-      <button
-        ref={closeButtonRef}
-        type="button"
-        className={styles.close}
-        onClick={handleClose}
-        aria-label="Fermer la lightbox"
-      >
-        ×
-      </button>
+    function handleKeyDown(event) {
+        if (
+            event.target.closest(
+                "video, input, textarea, select, [contenteditable='true']",
+            )
+        ) {
+            return;
+        }
 
-      <button
-        type="button"
-        className={styles.previous}
-        onClick={handlePrevious}
-        aria-label="Média précédent"
-      >
-        ‹
-      </button>
+        if (event.key === "ArrowRight") {
+            event.preventDefault();
+            handleNext();
+        }
 
-      <div className={styles.content}>
-        {selectedMedia.image ? (
-          <Image
-            className={styles.media}
-            src={`/images/${selectedMedia.image}`}
-            alt={selectedMedia.title}
-            width={1000}
-            height={750}
-          />
-        ) : (
-          <video
-            key={selectedMedia.id}
-            className={styles.media}
-            src={`/images/${selectedMedia.video}`}
-            controls
-            aria-label={selectedMedia.title}
-          />
-        )}
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            handlePrevious();
+        }
+    }
 
-        <h2
-          id="media-dialog-title"
-          className={styles.title}
+    return (
+        <dialog
+            ref={modalRef}
+            className={styles.dialog}
+            aria-labelledby="media-dialog-title"
+            onCancel={(event) => {
+                event.preventDefault();
+                handleClose();
+            }}
+            onKeyDown={handleKeyDown}
         >
-          {selectedMedia.title}
-        </h2>
-      </div>
+            <button
+                ref={closeButtonRef}
+                type="button"
+                className={styles.close}
+                onClick={handleClose}
+                aria-label="Fermer la lightbox"
+            >
+                ×
+            </button>
 
-      <button
-        type="button"
-        className={styles.next}
-        onClick={handleNext}
-        aria-label="Média suivant"
-      >
-        ›
-      </button>
-    </dialog>
-  );
+            <button
+                type="button"
+                className={styles.previous}
+                onClick={handlePrevious}
+                aria-label="Média précédent"
+            >
+                ‹
+            </button>
+
+            <div className={styles.content}>
+                {selectedMedia.image ? (
+                    <Image
+                        className={styles.media}
+                        src={`/images/${selectedMedia.image}`}
+                        alt={selectedMedia.title}
+                        width={1000}
+                        height={750}
+                    />
+                ) : (
+                    <video
+                        key={selectedMedia.id}
+                        className={styles.media}
+                        src={`/images/${selectedMedia.video}`}
+                        controls
+                        aria-label={selectedMedia.title}
+                    />
+                )}
+
+                <h2
+                    id="media-dialog-title"
+                    className={styles.title}
+                >
+                    {selectedMedia.title}
+                </h2>
+            </div>
+
+            <button
+                type="button"
+                className={styles.next}
+                onClick={handleNext}
+                aria-label="Média suivant"
+            >
+                ›
+            </button>
+        </dialog>
+    );
 }

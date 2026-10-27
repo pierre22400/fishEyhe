@@ -12,13 +12,18 @@
   box-sizing: border-box;
   overflow: auto;
 }
-.dialog::backdrop { background: rgba(0, 0, 0, .65); }
+
+.dialog::backdrop {
+  background: rgba(0, 0, 0, .65);
+}
+
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
 }
+
 .media {
   display: block;
   width: auto;
@@ -28,41 +33,74 @@
   object-fit: contain;
   border-radius: 5px;
 }
+
 .title {
   width: 100%;
   margin: 0;
   font-size: 22px;
   font-weight: 400;
 }
-.close, .previous, .next {
+
+.close,
+.previous,
+.next {
   position: absolute;
   border: 0;
   background: transparent;
   color: #901c1c;
   cursor: pointer;
 }
+
 .close {
   top: 8px;
   right: 12px;
   padding: 5px 10px;
   font-size: 38px;
 }
-.previous, .next {
+
+.previous,
+.next {
   top: 50%;
   transform: translateY(-50%);
   padding: 8px;
   font-size: 48px;
 }
-.previous { left: 8px; }
-.next { right: 8px; }
-.close:focus-visible, .previous:focus-visible, .next:focus-visible {
+
+.previous {
+  left: 8px;
+}
+
+.next {
+  right: 8px;
+}
+
+.close:focus-visible,
+.previous:focus-visible,
+.next:focus-visible {
   outline: 3px solid #901c1c;
   outline-offset: 3px;
 }
+
 @media (max-width: 650px) {
-  .dialog { width: 98vw; padding: 52px 35px 20px; }
-  .previous { left: 0; }
-  .next { right: 0; }
-  .previous, .next { font-size: 36px; }
-  .title { font-size: 18px; }
+  .dialog {
+    width: 98vw;
+    padding: 52px 35px 20px;
+  }
+
+  .previous {
+    left: 0;
+  }
+
+  .next {
+    right: 0;
+  }
+
+  .previous,
+  .next {
+    font-size: 36px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
 }

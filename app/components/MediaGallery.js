@@ -24,39 +24,39 @@ export default function MediaGallery({ media, price, likedMediaIds = [] }) {
   );
 
   // Enregistre un like et met à jour le média concerné.
-async function handleLike(item) {
-  if (pendingMediaId !== null || likedIds.has(item.id)) return;
+  async function handleLike(item) {
+    if (pendingMediaId !== null || likedIds.has(item.id)) return;
 
-  setPendingMediaId(item.id);
-  setLikeError("");
+    setPendingMediaId(item.id);
+    setLikeError("");
 
-  try {
-    const response = await fetch(`/api/media/${item.id}/like`, {
-      method: "POST",
-    });
+    try {
+      const response = await fetch(`/api/media/${item.id}/like`, {
+        method: "POST",
+      });
 
-    if (!response.ok) {
-      throw new Error("Erreur lors de l'enregistrement du like");
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'enregistrement du like");
+      }
+
+      const data = await response.json();
+      setLikedIds((previous) => new Set(previous).add(item.id));
+
+      setMediaList((previousMedia) =>
+        previousMedia.map((mediaItem) =>
+          mediaItem.id === item.id
+            ? { ...mediaItem, likes: data.likes }
+            : mediaItem,
+        ),
+      );
+    } catch (error) {
+      setLikeError(
+        "Impossible d'enregistrer votre like. Veuillez réessayer.",
+      );
+    } finally {
+      setPendingMediaId(null);
     }
-
-    const data = await response.json();
-    setLikedIds((previous) => new Set(previous).add(item.id));
-
-    setMediaList((previousMedia) =>
-      previousMedia.map((mediaItem) =>
-        mediaItem.id === item.id
-          ? { ...mediaItem, likes: data.likes }
-          : mediaItem,
-      ),
-    );
-  } catch (error) {
-    setLikeError(
-      "Impossible d'enregistrer votre like. Veuillez réessayer.",
-    );
-  } finally {
-    setPendingMediaId(null);
   }
-}
 
   // Trie les médias selon le critère sélectionné.
   const sortedMedia = [...mediaList].sort((a, b) => {
@@ -114,14 +114,14 @@ async function handleLike(item) {
       )}
       <div className={styles.gallery}>
         {sortedMedia.map((item) => (
-<MediaCard
-  key={item.id}
-  media={item}
-  onSelect={(event) => handleOpen(event, item)}
-  onLike={() => handleLike(item)}
-  isLoading={pendingMediaId === item.id}
-  isLiked={likedIds.has(item.id)}
-/>
+          <MediaCard
+            key={item.id}
+            media={item}
+            onSelect={(event) => handleOpen(event, item)}
+            onLike={() => handleLike(item)}
+            isLoading={pendingMediaId === item.id}
+            isLiked={likedIds.has(item.id)}
+          />
         ))}
       </div>
 
