@@ -1,8 +1,12 @@
-/**
- * FishEye — contact du photographe.
- * Fenêtre native accessible : ouverture, fermeture et validation HTML.
- */
+
 "use client";
+/**
+ * CONTACT MODAL
+ * Affiche le formulaire de contact du photographe.
+ * Valide les champs et récupère les données avec FormData.
+ */
+
+
 import { useState, useRef, useEffect, useId } from "react";
 import "./ContactModal.css";
 

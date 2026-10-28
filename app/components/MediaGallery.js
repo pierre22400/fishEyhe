@@ -1,5 +1,11 @@
 
+
 "use client";
+/**
+ * MEDIA GALLERY
+ * Organise la galerie des photos et vidéos.
+ * Gère le tri, les likes, la sélection et l'ouverture de la lightbox.
+ */
 
 import { useState, useRef } from "react";
 import styles from "../photographer/[id]/photographer.module.css";

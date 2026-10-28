@@ -1,3 +1,8 @@
+/**
+ * PHOTOGRAPHER CARD
+ * Affiche la carte d'un photographe sur la page d'accueil.
+ * Reçoit ses informations par props et crée le lien vers sa fiche.
+ */
 import Link from "next/link";
 import Image from "next/image";
 

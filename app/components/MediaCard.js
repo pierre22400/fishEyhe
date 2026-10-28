@@ -1,3 +1,9 @@
+/**
+ * MEDIA CARD
+ * Affiche une photo ou une vidéo dans la galerie.
+ * Gère les boutons d'ouverture du média et de like.
+ */
+
 import styles from "./MediaCard.module.css";
 import Image from "next/image";
 
@@ -14,7 +20,7 @@ export default function MediaCard({
         type="button"
         className={styles.mediaButton}
         onClick={onSelect}
-        aria-label={`Ouvrir ${media.title}`}
+        aria-label={`Ouvrir le média « ${media.title} »`}
       >
         {media.image ? (
           <Image

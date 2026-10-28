@@ -1,4 +1,10 @@
+
 "use client";
+/**
+ * MEDIA LIGHTBOX
+ * Affiche le média sélectionné en grand dans une fenêtre modale.
+ * Gère les flèches du clavier, la fermeture et le focus initial.
+ */
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
@@ -71,7 +77,7 @@ export default function MediaLightbox({
         <dialog
             ref={modalRef}
             className={styles.dialog}
-            aria-labelledby="media-dialog-title"
+            aria-label="image closeup view"
             onCancel={(event) => {
                 event.preventDefault();
                 handleClose();
@@ -83,7 +89,7 @@ export default function MediaLightbox({
                 type="button"
                 className={styles.close}
                 onClick={handleClose}
-                aria-label="Fermer la lightbox"
+                aria-label="close dialog"
             >
                 ×
             </button>
@@ -92,7 +98,7 @@ export default function MediaLightbox({
                 type="button"
                 className={styles.previous}
                 onClick={handlePrevious}
-                aria-label="Média précédent"
+                aria-label="Previous image"
             >
                 ‹
             </button>
@@ -128,7 +134,7 @@ export default function MediaLightbox({
                 type="button"
                 className={styles.next}
                 onClick={handleNext}
-                aria-label="Média suivant"
+                aria-label="Next image"
             >
                 ›
             </button>
