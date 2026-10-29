@@ -1,3 +1,8 @@
+
+/*
+ * page d'accueil
+ */
+
 import PhotographerCard from "./components/PhotographerCard";
 import { getPhotographers } from "@/lib/photographers";
 import Image from "next/image";
